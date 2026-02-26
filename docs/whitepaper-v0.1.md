@@ -189,11 +189,21 @@ WorkNet 是一套基于经济博弈的协作协议。
 2. 若 `Σ_f d_f = 0`，则 `W_i^final = W_i(n*)`（声明递推权重）。
 
 ### 9.3 NodeBacker 分配公式
-设在胜出节点 `n*` 上有效节点押注总额为 `B*`，NodeBacker `j` 的押注额为 `b_j`，则：
+设：
+1. `B_total`：所有有效节点押注总额。
+2. `B_win`：押注在胜出节点 `n*` 上的总额。
+3. `b_j`：NodeBacker `j` 在 `n*` 上的押注额（仅对押对者定义）。
 
-`Reward_nodebacker(j) = β * P * (b_j / B*)`
+则押对者 `j` 的总收益为：
 
-若 `B*=0`，则 `β*P` 全部进入公共池。
+`Reward_nodebacker(j) = (β * P + B_total) * (b_j / B_win)`
+
+解释：
+1. `β*P` 是节点押注奖励池。
+2. `B_total` 是全部押注金（包含错押资金），由押对者按比例分配。
+3. 押错者收益为 `0`，其押注金并入 `B_total` 由押对者瓜分。
+
+若 `B_win=0`，则 `β*P + B_total` 全部进入公共池。
 
 ### 9.4 ShareForecaster 分配公式
 设有效预测者集合为 `F`。对每个 `f in F`，定义误差：
@@ -250,7 +260,8 @@ WorkNet 是一套基于经济博弈的协作协议。
 1. 假设 NodeBacker 在 C 上有效押注：
 2. Dave：`300 WRK`
 3. Eve：`700 WRK`
-4. 总额：`B*=1,000 WRK`
+4. 另有 Ivan 押注在 B：`500 WRK`（错押）
+5. 因此：`B_win=1,000 WRK`，`B_total=1,500 WRK`
 
 ### 11.3 占比预测共识
 假设 3 个有效 ShareForecaster 提交预测与质押：
@@ -271,8 +282,10 @@ WorkNet 是一套基于经济博弈的协作协议。
 
 ### 11.5 NodeBacker 奖池分配
 1. NodeBacker 池：`βP = 1,000 WRK`
-2. Dave：`1,000*(300/1,000)=300.00 WRK`
-3. Eve：`1,000*(700/1,000)=700.00 WRK`
+2. 全部押注金：`B_total = 1,500 WRK`
+3. Dave：`(1,000+1,500)*(300/1,000)=750.00 WRK`
+4. Eve：`(1,000+1,500)*(700/1,000)=1,750.00 WRK`
+5. Ivan：`0 WRK`（错押）
 
 ### 11.6 ShareForecaster 奖池分配
 1. ShareForecaster 池：`δP = 1,000 WRK`
